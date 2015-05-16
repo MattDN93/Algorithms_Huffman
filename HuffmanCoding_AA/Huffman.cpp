@@ -281,6 +281,7 @@ int compress()
 		huffcode_csv.resize(comp_char);	//resize the comma separated value array to the size of the values captured
 
 		clock_t compress_end_coding_table = clock();
+		system("pause");
 
 		cout << "\t| --------------------------------------------------------|\n" << endl;
 		cout << "\t  Huffman Binary compressed text:\n" << endl;
@@ -343,6 +344,7 @@ int decompress()
 	cout << "\t| Decompression.   | \n" << endl;
 	cout << "\t| Choose a file to decompress here.	  | \n" << endl;
 	cout << "\t| --------------------------------------------------------|\n" << endl;
+	clock_t decompress_begin_coding_table = clock();
 	processResult = fileOpen(DECOMPRESS);											//prompts user to enter the filename to open
 	if (processResult == DECOMPRESS_FAIL)
 	{
@@ -365,6 +367,7 @@ int decompress()
 
 	decompress_input_csv.resize(input_chars.size());
 
+	
 	std::stringstream ss(str);
 	string iter;
 	while (getline(ss, iter,'~'))
@@ -376,7 +379,7 @@ int decompress()
 			decompress_input_csv.push_back(iter);
 		}
 
-		
+
 		cout << "\t| --------------------------------------------------------|\n" << endl;
 		cout << "\t| THIS TABLE WAS GENERATED FROM THE TEXT FILE VALUES\n" << endl;
 		cout << "\t| Encoding Table with Huffman Compression Algorithm\n" << endl;
@@ -388,6 +391,10 @@ int decompress()
 		}
 		
 		//------------------decode the binary equivalnt------------------------//
+		clock_t decompress_end_coding_table = clock();
+
+		clock_t decompress_begin_binparse = clock();
+
 	t = "";
 	ans = "";
 	for (int i = 0; i < str_bin.size(); i++) {			//for each binary received digit
@@ -401,11 +408,18 @@ int decompress()
 			t = "";										//reset the codework lookup
 		}												//if not found, keep building t til a valid code found
 	}
+
+	
 	cout << "\n\t| --------------------------------------------------------|\n" << endl;
 	cout << "\t| Plaintext output of the decompression:| \n" << endl;
 	cout << ans << endl;													//output the decompressed ASCII
 	output_file << ans;														//write to file
+	clock_t decompress_end_binparse = clock();
 	cout << "\n\t| --------------------------------------------------------|\n" << endl;
+	cout << "\t| --------------------------------------------------------|\n" << endl;
+	cout << "\t| TIMING RESULTS:| \n" << endl;
+	cout << "\t| Time to parse and generate the plaintext: " << double(diffclock(decompress_end_coding_table, decompress_begin_coding_table)) << " s." << endl;
+	cout << "\t| Time to parse binary code table: " << double(diffclock(decompress_end_binparse, decompress_end_binparse)) << " s." << endl;
 	cout << "\t| Check the '_decompressed' text file for the decompressed text.| \n" << endl;
 	cout << "\t| --------------------------------------------------------|\n" << endl;
 	output_file.close();													//file manager, close file safely
