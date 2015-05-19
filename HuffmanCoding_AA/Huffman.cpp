@@ -6,6 +6,8 @@
 	known as Huffman coding. Please read the report for the 
 	full theoretical background.
 
+	This code also available on http://github.com/mattdn93/Algorithms_Huffman
+
 	Compiled in VS2013 on Windows 10 10074
 	PROGRAM I/O
 	------------------------------------------------------
@@ -21,7 +23,7 @@
 
 #include "Huffman.h"
 
-priority_queue< node, vector<node>, node > q;
+priority_queue< node, vector<node>, node > q;				//initialised priority queue used to store nodes
 
 //--------------Menu System----------//
 
@@ -103,11 +105,11 @@ int fileOpen(int process)
 	cout << "\t| --------------------------------------------------------|\n" << endl;
 	cout << "\t| Enter the filename: "; cin >> input_filename; cout << "\t\t\t|\n"<< endl;
 
-	input_f_name_ext = input_filename + ".txt";
+	input_f_name_ext = input_filename + ".txt";								//reads in filename from the user and outputs it with "xxxx.txt"
 	input_file.open(input_f_name_ext.c_str());
-	//ifstream input_file(input_filename.c_str());								//opens the file for reading 
+								
 
-	if ( !input_file.is_open( ) )
+	if ( !input_file.is_open( ) )											//error checking
 	{
 		cout << "\t| --------------------------------------------------------|\n" << endl;
 		cout << "\t| Error. File couldn't be opened.			  | \n" << endl;
@@ -121,9 +123,9 @@ int fileOpen(int process)
 		cout << "\t| File opened OK.				      | \n" << endl;
 		cout << "\t| --------------------------------------------------------|\n" << endl;
 	
-		if (process == COMPRESS)
+		if (process == COMPRESS)														//for compression we simply read all the plaintext in from the file
 		{
-			for (text_from_file; getline(input_file, text_from_file);)									//read the input from the file
+			for (text_from_file; getline(input_file, text_from_file);)					//read the input from the file
 				/*while (getline(input_file,text_from_file))  FOR SIMPLE CODE*/
 			{
 				//cout << text_from_file << '\n';										//TESTING: raw data output
@@ -131,15 +133,15 @@ int fileOpen(int process)
 				/*str = text_from_file; FOR SIMPLE CODE*/
 			}
 		}
-
-		if (process == DECOMPRESS)
+			
+		if (process == DECOMPRESS)														//for decompression we read the header code table & binary separately
 		{
-			for (text_from_file; getline(input_file, text_from_file_bin);)
+			for (text_from_file; getline(input_file, text_from_file_bin);)				//read separate parts of the document at a time
 			{
 				getline(input_file, text_from_file); 
 				getline(input_file, text_from_file);
-				str += text_from_file;
-				str_bin += text_from_file_bin;
+				str += text_from_file;													//this string stores the huffman code table
+				str_bin += text_from_file_bin;											//this string stores the binary compressed version of the file
 			}
 		}
 
@@ -170,12 +172,12 @@ void fileOpenOut(string filename,int mode)
 	}
 	else
 	{
-		if (mode == COMPRESS)
+		if (mode == COMPRESS)												//appends "_compressed" to the file and creates the output file
 		{
 			text_to_file = filename + "_compressed.txt";
 			output_file.open(text_to_file.c_str());
 		}
-		else if (mode == DECOMPRESS)
+		else if (mode == DECOMPRESS)										//appends "_decompressed" to the file and creates the output file
 		{
 			text_to_file = filename + "_decompressed.txt";
 			output_file.open(text_to_file.c_str());
@@ -184,7 +186,7 @@ void fileOpenOut(string filename,int mode)
 	}
 	
 
-	if (!input_file.is_open())
+	if (!input_file.is_open())												//error checking
 	{
 		cout << "\t| --------------------------------------------------------|\n" << endl;
 		cout << "\t| Error. File couldn't be opened for writing.  | \n" << endl;
@@ -193,8 +195,10 @@ void fileOpenOut(string filename,int mode)
 	}
 
 }
+	
+//---------------------------------COMPRESSION METHOD------------------------------------//
 
-int compress()
+int compress()										
 {
 	int file_result=0;															
 	file_result = fileOpen(COMPRESS);
@@ -220,10 +224,10 @@ int compress()
 	cout << "\n\t| --------------------------------------------------------|\n" << endl;
 	input_file.close();															//file management, close the input file!
 
-	in_char_global = input_chars;
+	in_char_global = input_chars;												
 
 	cout << "\n" << endl;
-	processResult = 0;										//clear potential previous error messages
+	processResult = 0;															//clear potential previous error messages
 	try{
 		for (int i = 0; i <= 256; i++) 											//casts the ASCII character to its integer equivalent. We assume uppercase integers here!
 		{																										
@@ -249,7 +253,7 @@ int compress()
 		cout << "\t| Encoding Table with Huffman Compression Algorithm\n" << endl;
 		cout << "\t| Symbol" << "\t" << "Frequency" << "\t" << "Assigned Binary Code" << endl;
 		cout << "\t| --------------------------------------------------------|\n" << endl;
-		trav_type = TABULAR_OUT;
+		trav_type = TABULAR_OUT;												//NOTIFIES TRAVERSAL METHOD TO OUTPUT TABLE
 
 		//----------------------------resizing operation------------------------
 		// Resizes a Nx2 matrix, where N = text size; 2 columns, 
@@ -262,7 +266,7 @@ int compress()
 
 		
 
-		/*-----------------------------matching operation-----------------------
+		/*-----------------------------matching operation-----------------------//
 		Iterates looking for each character in the input string, matching it to the appropriate one in the Huffman code vector
 		and printing out the equivalent binary Huffman code for it . 
 		Prerequisites: Requires populated Nx2 vector matrix containing each unique char and its associated Huffman Code
@@ -270,7 +274,7 @@ int compress()
 				Also outputs the ASCII chars with their associated code in comma separated form to the file for decompression later
 				output_compressed = only the compressed bits generated (overwritten each time)
 																					*/
-		clock_t compress_begin_coding_table = clock();
+		clock_t compress_begin_coding_table = clock();							//STARTS TIMING CALCULATION
 
 		//Reference https ://www.physicsforums.com/threads/measuring-time-elapsed-in-c.224989/
 
@@ -280,42 +284,43 @@ int compress()
 		
 		huffcode_csv.resize(comp_char);	//resize the comma separated value array to the size of the values captured
 
-		clock_t compress_end_coding_table = clock();
+		clock_t compress_end_coding_table = clock();								//ENDS TIMING CALCULATION FOR CODE TABLE
 		system("pause");
 
 		cout << "\t| --------------------------------------------------------|\n" << endl;
 		cout << "\t  Huffman Binary compressed text:\n" << endl;
 		cout << "\t  ";
 
-		clock_t compress_begin_encode_proc = clock();
+		clock_t compress_begin_encode_proc = clock();								//STARTS TIMING FOR ENCODING TO BINARY
 
 		for (int i = 0; i < str.length(); i++)
 		{
-			cout << stored_comp_codes[(int)str[i]];
-			output_file << stored_comp_codes[(int)str[i]];
-			//for (int j = 0; j < stored_comp_codes.size(); j++)			
-			//{
-			//	if (str.substr(i,1)==stored_comp_codes[j][0])			//we care about the ASCII code in integer value anyhow
-			//	{
-			//		cout << stored_comp_codes[j][1];							//output the binary Huffman Code for this char												
-			//		output_file << stored_comp_codes[j][1];						//outputs to file
-			//	}
-			//}
+			cout << stored_comp_codes[(int)str[i]];									//display to screen and...
+			output_file << stored_comp_codes[(int)str[i]];							//...write to file
 
 		}
 		cout << "\n\n";
-		output_file << "\n\n";							//separate the binary encoded from the coded table CSV
-		//output_file << ">>,";							//DELIMITER for the start of the code table
+		output_file << "\n\n";														//separate the binary encoded from the coded table in "~" delimiter form
+		//output_file << ">>,";														//DELIMITER for the start of the code table [DEPRECATED]
 
 		for (int i = 0; i < huffcode_csv.size(); i++)
 		{
-			cout << huffcode_csv[i];					//TESTING ONLY outputs CSV code values to screen
-			output_file << huffcode_csv[i];				//prints each ASCII char and it's code to the file
+			cout << huffcode_csv[i];												//VALIDATION ONLY outputs CSV code values to screen
+			output_file << huffcode_csv[i];											//prints each ASCII char and it's code to the file
 		}
-														//output the Huffman code in comma separated form
-		//output_file << "<<";							//DELIMITER for the end of the code table
+																					//output the Huffman code in comma separated form
+		//output_file << "<<";														//DELIMITER for the end of the code table [DEPRECATED]
 
-		clock_t compress_end_encode_proc = clock();
+		clock_t compress_end_encode_proc = clock();									//ENED TIMING FOR BINARY ENCODING OF FILE
+
+		//--------------------------TIMING RESULTS---------------------------------//
+		/* Process: Each clock_t object generated starts a clock timer counting from that
+					point in the execution. To find the elapsed time the difference between
+					these clock objects is found.
+		   Input: None
+		   Output: Time in seconds to execute the applicable operation. 2 decimal precision.
+			
+																					*/
 
 		cout << "\n\t| --------------------------------------------------------|\n" << endl;
 		cout << "\t| Check the '_compressed' text file for the compressed text.| \n" << endl;
@@ -336,6 +341,8 @@ int compress()
 	}
 	return COMPRESS_SUCCESS;					//process completed successfully
 }
+
+//-----------------------------------------DECOMPRESSION METHOD-----------------------------------------//
 
 int decompress()
 {
@@ -365,10 +372,10 @@ int decompress()
 	*/
 	processResult = 0;										//clear potential previous error messages
 
-	decompress_input_csv.resize(input_chars.size());
+	decompress_input_csv.resize(input_chars.size());		//resize the input vector tentatively--it'll never be larger than the input!
 
 	
-	std::stringstream ss(str);
+	std::stringstream ss(str);								//create stringstream object to read in file contents
 	string iter;
 	while (getline(ss, iter,'~'))
 		{
@@ -387,13 +394,23 @@ int decompress()
 		cout << "\t| --------------------------------------------------------|\n" << endl;
 		for (int i = 0; i < mymap.size(); i++)
 		{
-			//cout << mymap << "\t\t" << endl;		//if for screen printing
+			//cout << mymap << "\t\t" << endl;		//if for screen printing [DEPRECATED]
 		}
 		
 		//------------------decode the binary equivalnt------------------------//
 		clock_t decompress_end_coding_table = clock();
 
 		clock_t decompress_begin_binparse = clock();
+
+		/* Code Searching Method
+			Process: Traverses the tree searching for leaf nodes, building up a binary code
+					 as it goes, this binary code is compared with Huffman codes in the 
+					 compressed document and a associated char is assigned if the code
+					 is found.
+			Input: None externally, uses internal header-file based vectors
+			Output: "ans" string containing document plaintext
+		
+																						*/
 
 	t = "";
 	ans = "";
@@ -409,6 +426,8 @@ int decompress()
 		}												//if not found, keep building t til a valid code found
 	}
 
+
+
 	
 	cout << "\n\t| --------------------------------------------------------|\n" << endl;
 	cout << "\t| Plaintext output of the decompression:| \n" << endl;
@@ -416,6 +435,16 @@ int decompress()
 	output_file << ans;														//write to file
 	clock_t decompress_end_binparse = clock();
 	cout << "\n\t| --------------------------------------------------------|\n" << endl;
+
+	//--------------------------TIMING RESULTS---------------------------------//
+	/* Process: Each clock_t object generated starts a clock timer counting from that
+	point in the execution. To find the elapsed time the difference between
+	these clock objects is found.
+	Input: None
+	Output: Time in seconds to execute the applicable operation. 2 decimal precision.
+
+	*/
+
 	cout << "\t| --------------------------------------------------------|\n" << endl;
 	cout << "\t| TIMING RESULTS:| \n" << endl;
 	cout << "\t| Time to parse and generate the plaintext: " << double(diffclock(decompress_end_coding_table, decompress_begin_coding_table)) << " s." << endl;
@@ -428,7 +457,7 @@ int decompress()
 	return DECOMPRESS_SUCCESS;
 }
 
-int main() {
+int main() {																//simply initiates application run
 
 	progLoad();
 	do{
